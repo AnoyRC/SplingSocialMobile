@@ -15,3 +15,4 @@ global.process = process;
 import "fast-text-encoding";
 
 AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName.toLowerCase(), () => App);

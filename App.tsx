@@ -8,11 +8,12 @@
  */
 
 import React, { useEffect } from 'react';
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
+import {SafeAreaView, Text , Button} from 'react-native';
 import { SocialProtocol } from "@spling/social-protocol";
 import {Keypair} from '@solana/web3.js';
 import { Post, ProtocolOptions } from '@spling/social-protocol/dist/types';
-
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const options = {
   rpcUrl:
@@ -20,8 +21,24 @@ const options = {
   useIndexer: true,
 } as ProtocolOptions;
 
+const Stack = createNativeStackNavigator();
 
 function App(): JSX.Element {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          //options={{title: 'Welcome'}}
+        />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+const HomeScreen = ({navigation}) => {
   const [socialProtocol, setSocialProtocol] = React.useState<SocialProtocol>();
   const [posts, setPosts] = React.useState<Post[]>();
 
@@ -43,34 +60,25 @@ function App(): JSX.Element {
     postInitialize();
   },[socialProtocol]);
 
+  const backgroundStyle = "bg-[#F8FFE9] h-screen w-screen"
   return (
-    <SafeAreaView style={styles.sectionContainer}>
-      {posts && posts.map((post, index) => {
-        return (
-          <Text key={index}>{post.text}</Text>
-        );
-      })}
-    </SafeAreaView>
+      <SafeAreaView className={backgroundStyle}>
+        {posts && posts.map((post) => {
+          return (
+            <Text className={`font-[Quicksand-Medium]`} key={post.postId}>{post.text}</Text>
+          );
+        })}
+        <Button
+        title="Go to Jane's profile"
+        onPress={() =>
+        navigation.navigate('Profile', {name: 'Jane'})
+        }
+        />
+      </SafeAreaView>
   );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+};
+const ProfileScreen = ({navigation, route}) => {
+  return <Text>This is {route.params.name}'s profile</Text>;
+};
 
 export default App;
