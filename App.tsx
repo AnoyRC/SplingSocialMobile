@@ -7,12 +7,12 @@
  * @format
  */
 
-import React, { useEffect } from 'react';
-import {SafeAreaView, Text , Button} from 'react-native';
+import React, { useEffect , useLayoutEffect } from 'react';
+import {SafeAreaView, View, ScrollView, Text , Button} from 'react-native';
 import { SocialProtocol } from "@spling/social-protocol";
 import {Keypair} from '@solana/web3.js';
 import { Post, ProtocolOptions } from '@spling/social-protocol/dist/types';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 const options = {
@@ -28,7 +28,7 @@ function App(): JSX.Element {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="Home"
+          name="SolSpace"
           component={HomeScreen}
           //options={{title: 'Welcome'}}
         />
@@ -41,6 +41,11 @@ function App(): JSX.Element {
 const HomeScreen = ({navigation}) => {
   const [socialProtocol, setSocialProtocol] = React.useState<SocialProtocol>();
   const [posts, setPosts] = React.useState<Post[]>();
+  const currentNavigation = useNavigation();
+
+  useLayoutEffect(()=>{
+    currentNavigation.setOptions({headerShown : false})
+  },[])
 
   useEffect(() => {
     const keypair = Keypair.generate();
@@ -60,12 +65,15 @@ const HomeScreen = ({navigation}) => {
     postInitialize();
   },[socialProtocol]);
 
-  const backgroundStyle = "bg-[#F8FFE9] h-screen w-screen"
+  const backgroundStyle = "bg-[#F8FFE9] h-fit w-screen overflow-y"
   return (
-      <SafeAreaView className={backgroundStyle}>
+      <ScrollView className={backgroundStyle}>
         {posts && posts.map((post) => {
           return (
-            <Text className={`font-[Quicksand-Medium]`} key={post.postId}>{post.text}</Text>
+            <View  key={post.postId}>
+              <Text className={`font-[Quicksand-Bold] p-2`}>{post.title}</Text>
+              <Text className={`font-[Quicksand-Medium] p-2`}>{post.text}</Text>
+            </View>
           );
         })}
         <Button
@@ -74,7 +82,7 @@ const HomeScreen = ({navigation}) => {
         navigation.navigate('Profile', {name: 'Jane'})
         }
         />
-      </SafeAreaView>
+      </ScrollView>
   );
 };
 const ProfileScreen = ({navigation, route}) => {
