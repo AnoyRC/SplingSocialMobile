@@ -1,5 +1,4 @@
-/* eslint-disable keyword-spacing */
-/* eslint-disable prettier/prettier */
+/* eslint-disable */
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
@@ -14,6 +13,7 @@ import {Keypair} from '@solana/web3.js';
 import { Post, ProtocolOptions } from '@spling/social-protocol/dist/types';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Feed from './src/pages/Feed';
 
 const options = {
   rpcUrl:
@@ -29,64 +29,36 @@ function App(): JSX.Element {
       <Stack.Navigator>
         <Stack.Screen
           name="SolSpace"
-          component={HomeScreen}
+          component={FeedScreen}
           //options={{title: 'Welcome'}}
         />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-const HomeScreen = ({navigation}) => {
-  const [socialProtocol, setSocialProtocol] = React.useState<SocialProtocol>();
-  const [posts, setPosts] = React.useState<Post[]>();
+const FeedScreen = ({navigation} : any) => {
   const currentNavigation = useNavigation();
 
   useLayoutEffect(()=>{
     currentNavigation.setOptions({headerShown : false})
-  },[])
+  },[currentNavigation]);
 
-  useEffect(() => {
-    const keypair = Keypair.generate();
-    const Initialize = async () => {
-      if(socialProtocol === undefined){
-        const socialProtocol : SocialProtocol = await new SocialProtocol(keypair, null, options).init();
-        setSocialProtocol(socialProtocol);
-      }
-    }
-
-    const postInitialize = async () => {
-      if(socialProtocol === undefined) {return;}
-      const posts : Post[] | undefined = await socialProtocol?.getAllPosts(33);
-      setPosts(posts);
-    };
-    Initialize();
-    postInitialize();
-  },[socialProtocol]);
-
-  const backgroundStyle = "bg-[#F8FFE9] h-fit w-screen overflow-y"
   return (
-      <ScrollView className={backgroundStyle}>
-        {posts && posts.map((post) => {
-          return (
-            <View  key={post.postId}>
-              <Text className={`font-[Quicksand-Bold] p-2`}>{post.title}</Text>
-              <Text className={`font-[Quicksand-Medium] p-2`}>{post.text}</Text>
-            </View>
-          );
-        })}
-        <Button
-        title="Go to Jane's profile"
-        onPress={() =>
-        navigation.navigate('Profile', {name: 'Jane'})
-        }
-        />
-      </ScrollView>
+    <SafeAreaView>
+      <Feed navigation={navigation} />
+    </SafeAreaView>
   );
 };
-const ProfileScreen = ({navigation, route}) => {
-  return <Text>This is {route.params.name}'s profile</Text>;
-};
+
+const ProfileScreen = ({navigation,route} : any) => {
+  return (
+    <SafeAreaView className = 'h-[100%] w-[100%] overflow-y'>
+      <View>
+        <Text>{route.params.name}</Text>
+      </View>
+    </SafeAreaView>
+  );
+}
 
 export default App;
