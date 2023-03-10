@@ -14,6 +14,7 @@ import { Post, ProtocolOptions } from '@spling/social-protocol/dist/types';
 import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Feed from './src/pages/Feed';
+import PostPage from './src/pages/PostPage';
 
 const options = {
   rpcUrl:
@@ -31,6 +32,10 @@ function App(): JSX.Element {
           name="SolSpace"
           component={FeedScreen}
           //options={{title: 'Welcome'}}
+        />
+        <Stack.Screen 
+          name="Post"
+          component={PostScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -51,12 +56,16 @@ const FeedScreen = ({navigation} : any) => {
   );
 };
 
-const ProfileScreen = ({navigation,route} : any) => {
+const PostScreen = ({navigation,route} : any) => {
+  const currentNavigation = useNavigation();
+
+  useLayoutEffect(()=>{
+    currentNavigation.setOptions({headerShown : false})
+  },[currentNavigation]);
+
   return (
-    <SafeAreaView className = 'h-[100%] w-[100%] overflow-y'>
-      <View>
-        <Text>{route.params.name}</Text>
-      </View>
+    <SafeAreaView>
+      <PostPage navigation={navigation} post={route.params.post} />
     </SafeAreaView>
   );
 }
