@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, {useEffect} from 'react';
-import {View, ScrollView, Text, Button, StatusBar} from 'react-native';
+import {View, ScrollView, Image ,Text, Button, StatusBar} from 'react-native';
 import {SocialProtocol} from '@spling/social-protocol';
 import {Keypair} from '@solana/web3.js';
 import {Post, ProtocolOptions} from '@spling/social-protocol/dist/types';
@@ -31,29 +31,37 @@ function Feed(props : FeedProps): JSX.Element {
         ).init();
         setSocialProtocol(socialProtocol);
       }
-    };
 
-    const postInitialize = async () => {
-      if (socialProtocol === undefined) {
-        return;
-      }
-      const posts: Post[] | undefined = await socialProtocol?.getAllPosts(33);
-      setPosts(posts);
+      const postInitialize = async () => {
+        if (socialProtocol === undefined) {
+          return;
+        }
+        const myPosts: Post[] | undefined = await socialProtocol?.getAllPosts(33);
+        setPosts(myPosts);
+        console.log(myPosts)
+      };
+      try {
+        console.log('Initializing posts');
+        await postInitialize();
+        console.log('Posts initialized');
+      } catch (error) {
+        console.log('Error initializing posts');
+      } 
     };
     Initialize();
-    postInitialize();
   }, [socialProtocol]);
 
-  const backgroundStyle = ' h-screen w-screen';
+  const backgroundStyle = ' h-screen w-screen ';
   return (
-    <ScrollView className={backgroundStyle}>
-      <View className = ''>
-        <Text className = {`font-[Quicksand-Regular] text-4xl text-[#000000] m-[${StatusBar.currentHeight}] py-3 ml-6`}>Feed</Text>
+    <View className={backgroundStyle}>
+      <View className = 'flex flex-row w-[100%] justify-center bg-[#f7f9ff]'>
+        {/* <Text className = {`font-[Quicksand-Regular] text-4xl text-[#000000] mt-[8px] py-3 ml-6`}>Feed</Text> */}
+        <Image className ='h-[40px] w-[140px] mt-[15px] mb-[10px]' source = {require('./SolSpaceLogo.png')} />
       </View>
-      <ScrollView className = 'h-fit w-[100%]'>
+      <ScrollView className = 'h-max w-[100%] bg-[#f7f9ff]'>
         {posts && posts.map((post) => <PostsDialog key={post.postId} post={post} socialProtocol={socialProtocol} navigation={props.navigation} />)}
       </ScrollView>
-    </ScrollView>
+    </View>
   );
 }
 

@@ -53,6 +53,7 @@
 	<false/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>icomoon.ttf</string>
 		<string>Quicksand-Bold.ttf</string>
 		<string>Quicksand-Light.ttf</string>
 		<string>Quicksand-Medium.ttf</string>
