@@ -15,6 +15,7 @@ import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Feed from './src/pages/Feed';
 import PostPage from './src/pages/PostPage';
+import Trending from './src/pages/Trending';
 
 const options = {
   rpcUrl:
@@ -36,6 +37,10 @@ function App(): JSX.Element {
         <Stack.Screen 
           name="Post"
           component={PostScreen}
+        />
+        <Stack.Screen 
+          name="Trending"
+          component={TrendingScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -69,5 +74,19 @@ const PostScreen = ({navigation,route} : any) => {
     </SafeAreaView>
   );
 }
+
+const TrendingScreen = ({navigation} : any) => {
+  const currentNavigation = useNavigation();
+
+  useLayoutEffect(()=>{
+    currentNavigation.setOptions({headerShown : false})
+  },[currentNavigation]);
+
+  return (
+    <SafeAreaView>
+      <Trending navigation={navigation} />
+    </SafeAreaView>
+  );
+};
 
 export default App;

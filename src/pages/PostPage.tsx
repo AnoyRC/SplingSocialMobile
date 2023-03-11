@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, {useEffect} from 'react';
-import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity} from 'react-native';
+import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity, BackHandler} from 'react-native';
 import {SocialProtocol} from '@spling/social-protocol';
 import {Keypair} from '@solana/web3.js';
 import {Post, ProtocolOptions} from '@spling/social-protocol/dist/types';
@@ -21,6 +21,10 @@ type PostProps = {
 function PostPage(props : PostProps): JSX.Element {
     const [date, setDate] = React.useState<String>();
     const [post, setPost] = React.useState<Post>();
+
+    const routes = props.navigation.getState()?.routes;
+    const prevRoute = routes[routes.length - 2];
+
     useEffect(()=>{
         setPost(JSON.parse(props.post));
         var date = new Date(JSON.parse(props.post).timestamp * 1000); //Scaring me
@@ -36,8 +40,8 @@ function PostPage(props : PostProps): JSX.Element {
     return <View className='h-screen w-screen bg-[#f7f9ff]'>
         <View className='w-full h-[40vh] bg-[#EAEAEA]'>
             {post?.media[0].file && <Image className='w-full h-full object-cover' source={{uri : post?.media[0].file}} />}
-            <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit p-4 px-5 mt-4 mx-4 rounded-full w-fit bg-[#ffffff]' onPress={()=>props.navigation.navigate('SolSpace')}>
-                <CustomIcon name = 'FeedIcon' size={30} className='text-[#000000] text-center text-xl'/>
+            <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit p-4 px-5 mt-4 mx-4 rounded-full w-fit bg-[#ffffff]' onPress={()=>props.navigation.goBack()}>
+                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-xl'/>
             </TouchableOpacity>
         </View>
         <ScrollView className = ''>

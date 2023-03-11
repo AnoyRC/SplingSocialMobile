@@ -4,7 +4,7 @@ import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity} from
 import {SocialProtocol} from '@spling/social-protocol';
 import {Keypair} from '@solana/web3.js';
 import {Post, ProtocolOptions} from '@spling/social-protocol/dist/types';
-import PostsDialog from '../components/post';
+import TrendingDialog from '../components/trendingPost';
 import CustomIcon from '../components/CustomIcon';
 
 const options = {
@@ -17,7 +17,7 @@ type FeedProps = {
   navigation: any;
 }
 
-function Feed(props : FeedProps): JSX.Element {
+function Trending(props : FeedProps): JSX.Element {
   const [socialProtocol, setSocialProtocol] = React.useState<SocialProtocol>();
   const [posts, setPosts] = React.useState<Post[]>();
 
@@ -38,7 +38,8 @@ function Feed(props : FeedProps): JSX.Element {
           return;
         }
         const myPosts: Post[] | undefined = await socialProtocol?.getAllPosts(33);
-        setPosts(myPosts);
+        const sortedPosts = myPosts.sort((a, b) => b.likes.length - a.likes.length);
+        setPosts(sortedPosts);
       };
       try {
         console.log('Initializing posts');
@@ -55,20 +56,20 @@ function Feed(props : FeedProps): JSX.Element {
   return (
     <View className={backgroundStyle}>
       <View className = 'flex flex-row w-[100%] justify-center bg-[#ffffff] border-[#000000] border-[1px] rounded-b-2xl'>
-        {/* <Text className = {`font-[Quicksand-Regular] text-4xl text-[#000000] mt-[8px] py-3 ml-6`}>Feed</Text> */}
-        <Image className ='h-[40px] w-[140px] mt-[15px] mb-[10px]' source = {require('./SolSpaceLogo.png')} />
+        <Text className = {`font-[Quicksand-SemiBold] text-4xl text-[#000000] mt-[8px] py-3 `}>#Trending</Text>
+        {/* <Image className ='h-[40px] w-[140px] mt-[15px] mb-[10px]' source = {require('./SolSpaceLogo.png')} /> */}
       </View>
       <ScrollView className = 'h-[80vh] w-[100%] content-center bg-[#f7f9ff]'>
-        {posts && posts.map((post) => <PostsDialog key={post.postId} post={post} socialProtocol={socialProtocol} navigation={props.navigation} />)}
+        {posts && posts.map((post,index) => <TrendingDialog key={post.postId} post={post} socialProtocol={socialProtocol} navigation={props.navigation} index={index}/>)}
       </ScrollView>
       <View className='bg-[#000000] w-[100%] h-[10vh] rounded-t-2xl'>
-        <View className='flex flex-row justify-between items-center flex-grow px-14'>
-          <TouchableOpacity onPress={()=>{props.navigation.navigate('Trending')}}>
-            <CustomIcon name = 'FeaturedIcon' size={30} className='text-[#ffffff] text-center text-2xl'/>
-          </TouchableOpacity>
+        <View className='flex flex-row justify-between items-center flex-grow pr-14 pl-6'>
           <View className = 'flex flex-row items-center justify-center h-fit py-3 px-8 rounded-full w-fit bg-[#ffffff]'>
-            <CustomIcon name = 'FeedIcon' size={30} className='text-[#000000] text-center text-2xl shadow-2xl'/>
+            <CustomIcon name = 'FeaturedActiveIcon' size={30} className='text-[#000000] text-center text-2xl shadow-2xl'/>
           </View>
+          <TouchableOpacity className='mr-9' onPress={()=>{props.navigation.navigate('SolSpace')}}>
+            <CustomIcon name = 'FeedIcon' size={30} className='text-[#ffffff] text-center text-2xl'/>
+          </TouchableOpacity>
           <TouchableOpacity>
             <CustomIcon name = 'ProfileIcon' size={30} className='text-[#ffffff] text-center text-2xl'/>
           </TouchableOpacity>
@@ -81,4 +82,4 @@ function Feed(props : FeedProps): JSX.Element {
   );
 }
 
-export default Feed;
+export default Trending;
