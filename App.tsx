@@ -16,6 +16,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import Feed from './src/pages/Feed';
 import PostPage from './src/pages/PostPage';
 import Trending from './src/pages/Trending';
+import ConnectPage from './src/pages/ConnectPage';
 
 const options = {
   rpcUrl:
@@ -24,11 +25,14 @@ const options = {
 } as ProtocolOptions;
 
 const Stack = createNativeStackNavigator();
-
 function App(): JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen 
+          name="Connect"
+          component={ConnectScreen}
+        />
         <Stack.Screen
           name="SolSpace"
           component={FeedScreen}
@@ -46,6 +50,20 @@ function App(): JSX.Element {
     </NavigationContainer>
   );
 }
+
+const ConnectScreen = ({navigation} : any) => {
+  const currentNavigation = useNavigation();
+
+  useLayoutEffect(()=>{
+    currentNavigation.setOptions({headerShown : false})
+  },[currentNavigation]);
+
+  return (
+    <SafeAreaView>
+      <ConnectPage navigation={navigation} />
+    </SafeAreaView>
+  );
+};
 
 const FeedScreen = ({navigation} : any) => {
   const currentNavigation = useNavigation();

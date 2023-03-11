@@ -6,6 +6,7 @@ import {Keypair} from '@solana/web3.js';
 import {Post, ProtocolOptions} from '@spling/social-protocol/dist/types';
 import PostsDialog from '../components/post';
 import CustomIcon from '../components/CustomIcon';
+import { useAuthorization } from '../utils/useAuthorization';
 
 const options = {
   rpcUrl:
@@ -20,8 +21,10 @@ type FeedProps = {
 function Feed(props : FeedProps): JSX.Element {
   const [socialProtocol, setSocialProtocol] = React.useState<SocialProtocol>();
   const [posts, setPosts] = React.useState<Post[]>();
+  const {selectedAccount} = useAuthorization();
 
   useEffect(() => {
+    console.log(selectedAccount?.publicKey.toString())
     const keypair = Keypair.generate();
     const Initialize = async () => {
       if (socialProtocol === undefined) {
