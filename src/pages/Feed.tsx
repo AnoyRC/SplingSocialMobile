@@ -1,12 +1,13 @@
 /* eslint-disable */
-import React, {useEffect} from 'react';
-import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity} from 'react-native';
+import React, {useCallback, useEffect} from 'react';
+import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity, ToastAndroid} from 'react-native';
 import {SocialProtocol} from '@spling/social-protocol';
 import {Keypair} from '@solana/web3.js';
-import {Post, ProtocolOptions} from '@spling/social-protocol/dist/types';
+import {Post, ProtocolOptions, User} from '@spling/social-protocol/dist/types';
 import PostsDialog from '../components/post';
 import CustomIcon from '../components/CustomIcon';
 import { useAuthorization } from '../utils/useAuthorization';
+import { useFocusEffect } from '@react-navigation/native' 
 
 const options = {
   rpcUrl:
@@ -22,19 +23,38 @@ function Feed(props : FeedProps): JSX.Element {
   const [socialProtocol, setSocialProtocol] = React.useState<SocialProtocol>();
   const [posts, setPosts] = React.useState<Post[]>();
   const {selectedAccount} = useAuthorization();
+  const [userInfo, setUserInfo] = React.useState<User>();
 
-  useEffect(() => {
-    console.log(selectedAccount?.publicKey.toString())
+  useFocusEffect(
+    useCallback(() => {
     const keypair = Keypair.generate();
     const Initialize = async () => {
       if (socialProtocol === undefined) {
+        if(!selectedAccount?.publicKey){
         const socialProtocol: SocialProtocol = await new SocialProtocol(
           keypair,
           null,
           options,
         ).init();
         setSocialProtocol(socialProtocol);
+        }
+        else{
+          console.log(selectedAccount?.publicKey)
+          const walletMock = {
+            publicKey: selectedAccount.publicKey,
+            payer: null as any,
+          } as any;
+          const socialProtocol: SocialProtocol = await new SocialProtocol(
+            walletMock,
+            null,
+            options,
+          ).init();
+          setSocialProtocol(socialProtocol);
+        }
       }
+    
+      
+    
 
       const postInitialize = async () => {
         if (socialProtocol === undefined) {
@@ -43,6 +63,7 @@ function Feed(props : FeedProps): JSX.Element {
         const myPosts: Post[] | undefined = await socialProtocol?.getAllPosts(33);
         setPosts(myPosts);
       };
+
       try {
         console.log('Initializing posts');
         await postInitialize();
@@ -50,9 +71,38 @@ function Feed(props : FeedProps): JSX.Element {
       } catch (error) {
         console.log('Error initializing posts');
       } 
-    };
+
+      const userInitialize = async () => {
+        if (socialProtocol === undefined) {
+          return;
+        }
+        if(selectedAccount?.publicKey){
+          const myUser: User | null = await socialProtocol?.getUserByPublicKey(selectedAccount?.publicKey);
+          if(myUser) setUserInfo(myUser);
+        }
+      }
+  
+      try {
+        console.log('Initializing User');
+        userInitialize();
+        console.log('User initialized');
+      } catch (error) {
+        console.log('Error initializing User');
+      } 
+    }
     Initialize();
-  }, [socialProtocol]);
+  },[socialProtocol, selectedAccount])
+  );
+
+  const handleProfile = () => {
+    if(userInfo)  props.navigation.navigate('Profile', {userId: userInfo.userId});
+    else{
+      ToastAndroid.show(
+        'No user found',
+        ToastAndroid.LONG,
+      );
+    }
+  }
 
   const backgroundStyle = ' h-screen w-screen bg-[#f7f9ff]';
   return (
@@ -62,7 +112,7 @@ function Feed(props : FeedProps): JSX.Element {
         <Image className ='h-[40px] w-[140px] mt-[15px] mb-[10px]' source = {require('./SolSpaceLogo.png')} />
       </View>
       <ScrollView className = 'h-[80vh] w-[100%] content-center bg-[#f7f9ff]'>
-        {posts && posts.map((post) => <PostsDialog key={post.postId} post={post} socialProtocol={socialProtocol} navigation={props.navigation} />)}
+        {posts && posts.map((post) => <PostsDialog key={post.postId} post={post} socialProtocol={socialProtocol} navigation={props.navigation} userId={userInfo ? userInfo?.userId : undefined}/>)}
       </ScrollView>
       <View className='bg-[#000000] w-[100%] h-[10vh] rounded-t-2xl'>
         <View className='flex flex-row justify-between items-center flex-grow px-14'>
@@ -72,7 +122,7 @@ function Feed(props : FeedProps): JSX.Element {
           <View className = 'flex flex-row items-center justify-center h-fit py-3 px-8 rounded-full w-fit bg-[#ffffff]'>
             <CustomIcon name = 'FeedIcon' size={30} className='text-[#000000] text-center text-2xl shadow-2xl'/>
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleProfile}>
             <CustomIcon name = 'ProfileIcon' size={30} className='text-[#ffffff] text-center text-2xl'/>
           </TouchableOpacity>
         </View>

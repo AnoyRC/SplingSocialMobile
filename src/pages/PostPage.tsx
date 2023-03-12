@@ -1,10 +1,12 @@
 /* eslint-disable */
 import React, {useEffect} from 'react';
-import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity, BackHandler} from 'react-native';
+import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity, BackHandler, ToastAndroid} from 'react-native';
 import {SocialProtocol} from '@spling/social-protocol';
 import {Keypair} from '@solana/web3.js';
-import {Post, ProtocolOptions} from '@spling/social-protocol/dist/types';
+import {Post, ProtocolOptions, User} from '@spling/social-protocol/dist/types';
 import CustomIcon from '../components/CustomIcon.js';
+import { useSplingTransact } from '../utils/transact';
+import { useAuthorization } from '../utils/useAuthorization';
 
 const options = {
     rpcUrl:
@@ -21,9 +23,79 @@ type PostProps = {
 function PostPage(props : PostProps): JSX.Element {
     const [date, setDate] = React.useState<String>();
     const [post, setPost] = React.useState<Post>();
+    const [socialProtocol, setSocialProtocol] = React.useState<SocialProtocol>();
+    const [userInfo, setUserInfo] = React.useState<User>();
+
+    const {selectedAccount} = useAuthorization();
 
     const routes = props.navigation.getState()?.routes;
     const prevRoute = routes[routes.length - 2];
+
+    const splingTransact = useSplingTransact();
+    const [like, setLike] = React.useState<boolean>(false);
+
+    useEffect(()=>{
+        const initialize = async () => {
+          if(socialProtocol !== undefined) return;
+          if (selectedAccount?.publicKey) {
+            const walletMock = {
+              publicKey: selectedAccount.publicKey,
+              payer: null as any,
+            } as any;
+            const socialProtocol: SocialProtocol = await new SocialProtocol(
+              walletMock,
+              null,
+              options,
+            ).init();
+            setSocialProtocol(socialProtocol);
+          }
+        };
+        initialize();
+        const userInitialize = async () => {
+            if (socialProtocol === undefined) {
+              return;
+            }
+            if(selectedAccount?.publicKey){
+              const myUser: User | null = await socialProtocol?.getUserByPublicKey(selectedAccount?.publicKey);
+              if(myUser) setUserInfo(myUser);
+            }
+          }
+      
+          try {
+            console.log('Initializing User');
+            userInitialize();
+            console.log('User initialized');
+          } catch (error) {
+            console.log('Error initializing User');
+          } 
+    },[socialProtocol])
+
+    useEffect(()=>{
+        if(userInfo === undefined || post === undefined) return;
+        if(post.likes.includes(userInfo.userId)){
+            setLike(true);
+        }
+    },[userInfo])
+
+    const likePost = async () => {
+        if(post){
+            try {
+                await splingTransact(async (socialProtocol) => {
+                    await socialProtocol?.likePost(post.publicKey);
+                });
+                setLike(!like); 
+                ToastAndroid.show(
+                    like ?  'Unliked this post' : 'Wow! You liked this post',
+                    ToastAndroid.LONG,
+                  );
+            } catch (error) {
+                ToastAndroid.show(
+                    !like ? 'Oops! Cannot like this post' : 'Oops! Cannot unlike this post',
+                    ToastAndroid.LONG,
+                  );
+            }
+        }
+    }
 
     useEffect(()=>{
         setPost(JSON.parse(props.post));
@@ -41,7 +113,7 @@ function PostPage(props : PostProps): JSX.Element {
         <View className='w-full h-[40vh] bg-[#EAEAEA]'>
             {post?.media[0].file && <Image className='w-full h-full object-cover' source={{uri : post?.media[0].file}} />}
             <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit p-4 px-5 mt-4 mx-4 rounded-full w-fit bg-[#ffffff]' onPress={()=>props.navigation.goBack()}>
-                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-xl'/>
+                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-xl'/>
             </TouchableOpacity>
         </View>
         <ScrollView className = ''>
@@ -62,8 +134,8 @@ function PostPage(props : PostProps): JSX.Element {
                 <Text className='font-[Quicksand-Regular] text-[#000000] mx-4'>{post?.text}</Text>
             </View>
         </ScrollView>
-        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000]'>
-                <CustomIcon name = 'LikeIcon' size={30} className='text-[#ffffff] text-center text-xl'/>
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={likePost}>
+                <CustomIcon name = {like ? 'LikeActiveIcon':'LikeIcon'} size={30} className='text-[#ffffff] text-center text-xl'/>
         </TouchableOpacity>
     </View>;
 }

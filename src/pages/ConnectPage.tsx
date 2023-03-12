@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, {useEffect} from 'react';
-import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity} from 'react-native';
+import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity, ToastAndroid} from 'react-native';
 import {SocialProtocol} from '@spling/social-protocol';
 import {Keypair, PublicKey} from '@solana/web3.js';
 import {Post, ProtocolOptions} from '@spling/social-protocol/dist/types';
@@ -22,48 +22,49 @@ type ConnectProps = {
 
 function ConnectPage(props : ConnectProps): JSX.Element {
     const[socialProtocol, setSocialProtocol] = React.useState<SocialProtocol>();
-    const { authorizeSession , selectedAccount } = useAuthorization();
+    const { authorizeSession } = useAuthorization();
     const splingTransact = useSplingTransact();
-      
-    useEffect(()=>{
-      if(!selectedAccount) return;
-        const initialize = async () => {
-          if(socialProtocol) return;
-          const walletMock = {
-            publicKey: selectedAccount.publicKey,
-            payer: null as any,
-          } as any;
-          const curSocialProtocol = await new SocialProtocol(
-            walletMock,
-            null,
-            options,
-          ).init();
-          setSocialProtocol(curSocialProtocol);
-        };
-        const UserInitialize = async () => {
-            if(socialProtocol == null) return;
-            const userInfo = await socialProtocol.getUserByPublicKey(selectedAccount.publicKey);
-            console.log(userInfo);
-        }
-        initialize();
-        UserInitialize();
-    },[selectedAccount, socialProtocol])
 
-    return <View>
-    <Button
+    const handleConnect = async () => {
+      try {
+        await transact(async (wallet) => {
+          await authorizeSession(wallet);
+        });
+        ToastAndroid.show(
+          'Connected',
+          ToastAndroid.LONG,
+        );
+        props.navigation.navigate('SolSpace')
+      } catch (error) {
+        ToastAndroid.show(
+          'Oops! Cannot connect wallet',
+          ToastAndroid.LONG,
+        );
+      };
+    }
+
+    return <View className = 'h-screen w-screen'>
+      <View className='flex flex-col items-center w-[100%] bg-[#000000] rounded-b-full pb-1 pt-32'>
+        <Image source={require('./Favicon.png')} className='h-[60%] w-[53%]'/>
+        <View className='absolute'>
+          <Text className='text-center font-[Quicksand-SemiBold] text-2xl mt-[140%]'>Explore the best of{"\n"}Solana's Dev Community</Text>
+        </View>
+      </View>
+      <View className = 'flex flex-col items-center mt-10'>
+        <TouchableOpacity className='bg-[#000000] w-[70%] p-5 rounded-full' onPress={handleConnect}>
+          <Text className='text-center font-[Quicksand-Bold] text-[#ffffff] text-xl'>Connect</Text>
+        </TouchableOpacity>
+        <TouchableOpacity className='bg-[#7e7e7e] w-[70%] p-5 rounded-full mt-5' onPress={()=>{props.navigation.navigate('SolSpace')}}>
+          <Text className='text-center font-[Quicksand-Bold] text-[#ffffff] text-xl'>Guest</Text>
+        </TouchableOpacity>
+
+        <Text className='text-[#000000] mt-5 font-[Quicksand-Regular] text-center'>*SolSpace is still in development,{"\n"}this is not the final release</Text>
+      </View>
+    {/* <Button
       onPress={async() => {
         await transact(async (wallet) => {
           await authorizeSession(wallet);
         });
-        // transact(async (mobileWallet) => {
-        //   const authorization = await mobileWallet.authorize({
-        //     cluster: "mainnet-beta",
-        //     identity: { name: "SolSpace" },
-        //   });
-        //   console.log(authorization.accounts[0].address)
-        //   setPublicKey(getPublicKeyFromAddress(authorization.accounts[0].address));
-        //   setAuth(authorization.accounts);
-        // });
       }}
       title="Authorize"
     />
@@ -82,7 +83,7 @@ function ConnectPage(props : ConnectProps): JSX.Element {
         props.navigation.navigate('SolSpace');
       }}
       title="Feed"
-    />
+    /> */}
   </View>
 }
 

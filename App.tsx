@@ -17,6 +17,7 @@ import Feed from './src/pages/Feed';
 import PostPage from './src/pages/PostPage';
 import Trending from './src/pages/Trending';
 import ConnectPage from './src/pages/ConnectPage';
+import Profile from './src/pages/ProfilePage';
 
 const options = {
   rpcUrl:
@@ -45,6 +46,10 @@ function App(): JSX.Element {
         <Stack.Screen 
           name="Trending"
           component={TrendingScreen}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -106,5 +111,19 @@ const TrendingScreen = ({navigation} : any) => {
     </SafeAreaView>
   );
 };
+
+const ProfileScreen = ({navigation,route} : any) => {
+  const currentNavigation = useNavigation();
+
+  useLayoutEffect(()=>{
+    currentNavigation.setOptions({headerShown : false})
+  },[currentNavigation]);
+
+  return (
+    <SafeAreaView>
+      <Profile navigation={navigation} userId={route.params.userId} />
+    </SafeAreaView>
+  );
+}
 
 export default App;
