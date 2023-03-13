@@ -43,7 +43,9 @@ function ConnectPage(props : ConnectProps): JSX.Element {
       };
     }
 
-    return <View className = 'h-screen w-screen'>
+    
+
+    return (<View className = 'h-screen w-screen'>
       <View className='flex flex-col items-center w-[100%] bg-[#000000] rounded-b-full pb-1 pt-32'>
         <Image source={require('./Favicon.png')} className='h-[60%] w-[53%]'/>
         <View className='absolute'>
@@ -60,31 +62,7 @@ function ConnectPage(props : ConnectProps): JSX.Element {
 
         <Text className='text-[#000000] mt-5 font-[Quicksand-Regular] text-center'>*SolSpace is still in development,{"\n"}this is not the final release</Text>
       </View>
-    {/* <Button
-      onPress={async() => {
-        await transact(async (wallet) => {
-          await authorizeSession(wallet);
-        });
-      }}
-      title="Authorize"
-    />
-
-    <Button
-      onPress={async() => {
-        await splingTransact(async (socialProtocol) => {
-          await socialProtocol?.followUser(21);
-        });
-      }}
-      title="Create User"
-    />
-
-    <Button
-      onPress={async() => {
-        props.navigation.navigate('SolSpace');
-      }}
-      title="Feed"
-    /> */}
-  </View>
+  </View>);
 }
 
 export default ConnectPage;

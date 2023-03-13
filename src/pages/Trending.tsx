@@ -7,6 +7,7 @@ import {Post, ProtocolOptions, User} from '@spling/social-protocol/dist/types';
 import TrendingDialog from '../components/trendingPost';
 import CustomIcon from '../components/CustomIcon';
 import { useAuthorization } from '../utils/useAuthorization';
+import LoadingScreen from '../components/LoadingScreen';
 
 const options = {
   rpcUrl:
@@ -23,6 +24,7 @@ function Trending(props : FeedProps): JSX.Element {
   const [posts, setPosts] = React.useState<Post[]>();
   const {selectedAccount} = useAuthorization();
   const [userInfo, setUserInfo] = React.useState<User>();
+  const [toggleLoading, setToggleLoading] = React.useState<boolean>(true);
 
   useEffect(() => {
     const keypair = Keypair.generate();
@@ -92,6 +94,12 @@ function Trending(props : FeedProps): JSX.Element {
     Initialize();
   }, [socialProtocol, selectedAccount]);
 
+  useEffect(() => {
+    if (posts) {
+      setToggleLoading(false);
+    }
+  }, [posts]);
+
   const handleProfile = () => {
     if(userInfo)  props.navigation.navigate('Profile', {userId: userInfo.userId});
     else{
@@ -128,6 +136,7 @@ function Trending(props : FeedProps): JSX.Element {
       <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[81vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={()=>{props.navigation.navigate('Create')}}>
         <CustomIcon name = 'PenIcon' size={30} className='text-[#ffffff] text-center text-xl'/>
       </TouchableOpacity>
+      {toggleLoading && <LoadingScreen/>}
     </View>
   );
 }

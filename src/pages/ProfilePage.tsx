@@ -7,6 +7,7 @@ import {Post, ProtocolOptions} from '@spling/social-protocol/dist/types';
 import PostsDialog from '../components/post';
 import CustomIcon from '../components/CustomIcon';
 import { useAuthorization } from '../utils/useAuthorization';
+import LoadingScreen from '../components/LoadingScreen';
 
 type ProfileProps = {
   navigation: any;
@@ -27,6 +28,7 @@ function Profile(props : ProfileProps): JSX.Element {
     const {selectedAccount} = useAuthorization();
     const routes = props.navigation.getState()?.routes;
     const prevRoute = routes[routes.length - 2];
+    const [toggleLoading, setToggleLoading] = React.useState<boolean>(true);
 
     useEffect(()=>{
         const keypair = Keypair.generate();
@@ -99,6 +101,10 @@ function Profile(props : ProfileProps): JSX.Element {
           } catch (error) {
             console.log('Error initializing posts');
           } 
+
+          if(userQuery){
+            setToggleLoading(false);
+          }
     },[userQuery])
 
     return <View className='h-screen w-screen'>
@@ -120,6 +126,7 @@ function Profile(props : ProfileProps): JSX.Element {
         <TouchableOpacity className='flex flex-row items-center justify-center h-fit p-4 px-5 mt-4 mx-4 rounded-full w-fit bg-[#ffffff] absolute' onPress={()=>props.navigation.goBack()}>
                 <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-xl'/>
         </TouchableOpacity>
+        {toggleLoading && <LoadingScreen/>}
     </View>
 }
 

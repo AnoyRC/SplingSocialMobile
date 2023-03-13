@@ -8,6 +8,7 @@ import PostsDialog from '../components/post';
 import CustomIcon from '../components/CustomIcon';
 import { useAuthorization } from '../utils/useAuthorization';
 import { useFocusEffect } from '@react-navigation/native' 
+import LoadingScreen from '../components/LoadingScreen';
 
 const options = {
   rpcUrl:
@@ -24,6 +25,7 @@ function Feed(props : FeedProps): JSX.Element {
   const [posts, setPosts] = React.useState<Post[]>();
   const {selectedAccount} = useAuthorization();
   const [userInfo, setUserInfo] = React.useState<User>();
+  const [toggleLoading, setToggleLoading] = React.useState<boolean>(true);
 
   useFocusEffect(
     useCallback(() => {
@@ -84,15 +86,20 @@ function Feed(props : FeedProps): JSX.Element {
   
       try {
         console.log('Initializing User');
-        userInitialize();
+        userInitialize(); 
         console.log('User initialized');
       } catch (error) {
         console.log('Error initializing User');
-      } 
+      }
     }
     Initialize();
   },[socialProtocol, selectedAccount])
   );
+
+  useEffect(() => {
+    if(posts === undefined) return;
+    setToggleLoading(false);
+  }, [posts, userInfo]);
 
   const handleProfile = () => {
     if(userInfo)  props.navigation.navigate('Profile', {userId: userInfo.userId});
@@ -114,14 +121,11 @@ function Feed(props : FeedProps): JSX.Element {
             if(selectedAccount?.publicKey) 
             props.navigation.navigate("CreateUser")
             else
-            ToastAndroid.show(
-              'Connect to a wallet first',
-              ToastAndroid.LONG,
-            );
+            props.navigation.navigate("Connect")
           }
           }}>
           <View className = {`rounded-full ${!userInfo ? 'bg-[#ff0000]' : 'bg-[#00ff00]'} w-2 h-2 mt-0.5`}></View>
-          <Text className='text-[#000000] ml-2 font-[Quicksand-Light]'>{userInfo ? userInfo.nickname : "No User Found"}</Text>
+          <Text className='text-[#000000] ml-2 font-[Quicksand-Light]'>{userInfo ? userInfo.nickname : selectedAccount?.publicKey ? "Create New User" : "Connect Wallet" }</Text>
         </TouchableOpacity>
         <Text className = {`font-[Quicksand-SemiBold] text-5xl text-[#666464] mt-3 pt-3 ml-6`}>Feed</Text>
         <Text className = {`font-[Quicksand-Regular] text-md text-[#666464] mb-4 ml-6`}>Get Updated list of all new content{"\n"}posted by our users</Text>
@@ -144,6 +148,7 @@ function Feed(props : FeedProps): JSX.Element {
       <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[81vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={()=>{props.navigation.navigate('Create')}}>
         <CustomIcon name = 'PenIcon' size={30} className='text-[#ffffff] text-center text-xl'/>
       </TouchableOpacity>
+      {toggleLoading && <LoadingScreen/>}
     </View>
   );
 }
