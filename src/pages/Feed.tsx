@@ -109,7 +109,17 @@ function Feed(props : FeedProps): JSX.Element {
     <View className={backgroundStyle}>
       <ScrollView className = 'h-[80vh] w-[100%] content-center bg-[#f7f9ff]'>
       <View className = 'flex flex-col w-[100%] justify-start bg-[#f7f9ff]'>
-        <TouchableOpacity className = 'rounded-full mx-4 p-4 border-[#7e7e7e] border-[1px] flex flex-row justify-center items-center mt-3' onPress={()=>{if(!userInfo) props.navigation.navigate("CreateUser")}}>
+        <TouchableOpacity className = 'rounded-full mx-4 p-4 border-[#7e7e7e] border-[1px] flex flex-row justify-center items-center mt-3' onPress={()=>{
+          if(!userInfo){ 
+            if(selectedAccount?.publicKey) 
+            props.navigation.navigate("CreateUser")
+            else
+            ToastAndroid.show(
+              'Connect to a wallet first',
+              ToastAndroid.LONG,
+            );
+          }
+          }}>
           <View className = {`rounded-full ${!userInfo ? 'bg-[#ff0000]' : 'bg-[#00ff00]'} w-2 h-2 mt-0.5`}></View>
           <Text className='text-[#000000] ml-2 font-[Quicksand-Light]'>{userInfo ? userInfo.nickname : "No User Found"}</Text>
         </TouchableOpacity>
