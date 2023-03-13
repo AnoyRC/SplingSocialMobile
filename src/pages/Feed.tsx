@@ -107,11 +107,15 @@ function Feed(props : FeedProps): JSX.Element {
   const backgroundStyle = ' h-screen w-screen bg-[#f7f9ff]';
   return (
     <View className={backgroundStyle}>
-      <View className = 'flex flex-row w-[100%] justify-center bg-[#ffffff] border-[#000000] border-[1px] rounded-b-2xl'>
-        {/* <Text className = {`font-[Quicksand-Regular] text-4xl text-[#000000] mt-[8px] py-3 ml-6`}>Feed</Text> */}
-        <Image className ='h-[40px] w-[140px] mt-[15px] mb-[10px]' source = {require('./SolSpaceLogo.png')} />
-      </View>
       <ScrollView className = 'h-[80vh] w-[100%] content-center bg-[#f7f9ff]'>
+      <View className = 'flex flex-col w-[100%] justify-start bg-[#f7f9ff]'>
+        <TouchableOpacity className = 'rounded-full mx-4 p-4 border-[#7e7e7e] border-[1px] flex flex-row justify-center items-center mt-3' onPress={()=>{if(!userInfo) props.navigation.navigate("CreateUser")}}>
+          <View className = {`rounded-full ${!userInfo ? 'bg-[#ff0000]' : 'bg-[#00ff00]'} w-2 h-2 mt-0.5`}></View>
+          <Text className='text-[#000000] ml-2 font-[Quicksand-Light]'>{userInfo ? userInfo.nickname : "No User Found"}</Text>
+        </TouchableOpacity>
+        <Text className = {`font-[Quicksand-SemiBold] text-5xl text-[#666464] mt-3 pt-3 ml-6`}>Feed</Text>
+        <Text className = {`font-[Quicksand-Regular] text-md text-[#666464] mb-4 ml-6`}>Get Updated list of all new content{"\n"}posted by our users</Text>
+      </View>
         {posts && posts.map((post) => <PostsDialog key={post.postId} post={post} socialProtocol={socialProtocol} navigation={props.navigation} userId={userInfo ? userInfo?.userId : undefined}/>)}
       </ScrollView>
       <View className='bg-[#000000] w-[100%] h-[10vh] rounded-t-2xl'>
@@ -127,7 +131,7 @@ function Feed(props : FeedProps): JSX.Element {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[81vh] ml-[80%] mr-4 rounded-full bg-[#000000]'>
+      <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[81vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={()=>{props.navigation.navigate('Create')}}>
         <CustomIcon name = 'PenIcon' size={30} className='text-[#ffffff] text-center text-xl'/>
       </TouchableOpacity>
     </View>

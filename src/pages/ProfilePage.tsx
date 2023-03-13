@@ -62,10 +62,9 @@ function Profile(props : ProfileProps): JSX.Element {
         if(selectedAccount?.publicKey){
           const myUser: User | null = await socialProtocol?.getUserByPublicKey(selectedAccount?.publicKey);
           if(myUser) setUserInfo(myUser);
-
-          const userQuery: User | null = await socialProtocol?.getUser(props.userId);
-          if(userQuery) setUserQuery(userQuery);
         }
+        const userQuery: User | null = await socialProtocol?.getUser(props.userId);
+          if(userQuery) setUserQuery(userQuery);
       }
   
       try {

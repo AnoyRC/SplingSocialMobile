@@ -18,6 +18,8 @@ import PostPage from './src/pages/PostPage';
 import Trending from './src/pages/Trending';
 import ConnectPage from './src/pages/ConnectPage';
 import Profile from './src/pages/ProfilePage';
+import Create from './src/pages/CreatePost';
+import CreateUser from './src/pages/CreateUser';
 
 const options = {
   rpcUrl:
@@ -40,6 +42,10 @@ function App(): JSX.Element {
           //options={{title: 'Welcome'}}
         />
         <Stack.Screen 
+          name='Create'
+          component={CreateScreen}
+        />
+        <Stack.Screen 
           name="Post"
           component={PostScreen}
         />
@@ -50,6 +56,10 @@ function App(): JSX.Element {
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
+        />
+        <Stack.Screen
+          name="CreateUser"
+          component={CreateUserScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -125,5 +135,33 @@ const ProfileScreen = ({navigation,route} : any) => {
     </SafeAreaView>
   );
 }
+
+const CreateScreen = ({navigation} : any) => {
+  const currentNavigation = useNavigation();
+
+  useLayoutEffect(()=>{
+    currentNavigation.setOptions({headerShown : false})
+  },[currentNavigation]);
+
+  return (
+    <SafeAreaView>
+      <Create navigation={navigation} />
+    </SafeAreaView>
+  );
+};
+
+const CreateUserScreen = ({navigation} : any) => {
+  const currentNavigation = useNavigation();
+
+  useLayoutEffect(()=>{
+    currentNavigation.setOptions({headerShown : false})
+  },[currentNavigation]);
+
+  return (
+    <SafeAreaView>
+      <CreateUser navigation={navigation} />
+    </SafeAreaView>
+  );
+};
 
 export default App;

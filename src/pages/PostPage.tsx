@@ -1,12 +1,17 @@
 /* eslint-disable */
 import React, {useEffect} from 'react';
-import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity, BackHandler, ToastAndroid} from 'react-native';
+import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity, BackHandler, ToastAndroid, TextInput, KeyboardAvoidingView} from 'react-native';
 import {SocialProtocol} from '@spling/social-protocol';
 import {Keypair} from '@solana/web3.js';
-import {Post, ProtocolOptions, User} from '@spling/social-protocol/dist/types';
+import {Post, ProtocolOptions, Reply, User} from '@spling/social-protocol/dist/types';
 import CustomIcon from '../components/CustomIcon.js';
 import { useSplingTransact } from '../utils/transact';
 import { useAuthorization } from '../utils/useAuthorization';
+import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper.js';
+import { setAdjustResize, setAdjustNothing } from 'rn-android-keyboard-adjust';
+import ReplyDialog from '../components/reply';
+import { KeyboardAwareScrollView } from 'react-native-ui-lib';
+import { TextField } from 'react-native-ui-lib/src/incubator/index.js';
 
 const options = {
     rpcUrl:
@@ -34,9 +39,13 @@ function PostPage(props : PostProps): JSX.Element {
     const splingTransact = useSplingTransact();
     const [like, setLike] = React.useState<boolean>(false);
 
+    const [replies, setReplies] = React.useState<Reply[]>();
+    const [comment, setComment] = React.useState<string>();
+    const [toggleReply, setToggleReply] = React.useState<boolean>(false);
+
     useEffect(()=>{
         const initialize = async () => {
-          if(socialProtocol !== undefined) return;
+          if(socialProtocol) return;
           if (selectedAccount?.publicKey) {
             const walletMock = {
               publicKey: selectedAccount.publicKey,
@@ -44,6 +53,15 @@ function PostPage(props : PostProps): JSX.Element {
             } as any;
             const socialProtocol: SocialProtocol = await new SocialProtocol(
               walletMock,
+              null,
+              options,
+            ).init();
+            setSocialProtocol(socialProtocol);
+          }
+          else{
+            const keypair = Keypair.generate();
+            const socialProtocol: SocialProtocol = await new SocialProtocol(
+              keypair,
               null,
               options,
             ).init();
@@ -68,14 +86,32 @@ function PostPage(props : PostProps): JSX.Element {
           } catch (error) {
             console.log('Error initializing User');
           } 
+          
     },[socialProtocol])
 
     useEffect(()=>{
-        if(userInfo === undefined || post === undefined) return;
+        const init = async () => {
+        if(post === undefined) return;
+        const commentInitialize = async () => {
+            if (socialProtocol) {
+              const replies = await socialProtocol.getAllPostReplies(post.postId);
+              setReplies(replies)
+            }
+        }
+        try {
+            console.log('Initializing Comments');
+            await commentInitialize();
+            console.log('Initialized Comments');
+          } catch (error) {
+            console.log('Error initializing Comments');
+          } 
+        if(userInfo === undefined) return;
         if(post.likes.includes(userInfo.userId)){
             setLike(true);
         }
-    },[userInfo])
+    }
+    init();
+    },[userInfo,socialProtocol,post])
 
     const likePost = async () => {
         if(post){
@@ -96,6 +132,31 @@ function PostPage(props : PostProps): JSX.Element {
             }
         }
     }
+
+    const handleReplies = async() => {
+        if(comment && comment?.length > 0 && post){
+            try {
+                const reply = await splingTransact(async (socialProtocol) => {
+                    return await socialProtocol.createPostReply(post.postId,comment);
+                });
+                if(replies && reply){
+                    const newReplies = [...replies,reply];
+                    setReplies(newReplies);
+                }
+                setComment("")
+                setToggleReply(false);
+                ToastAndroid.show(
+                    'Reply posted successfully',
+                    ToastAndroid.LONG,
+                  );
+            } catch (error) {
+                ToastAndroid.show(
+                    'Oops! Cannot reply to this post',
+                    ToastAndroid.LONG,
+                  );
+            }
+        }
+      }
 
     useEffect(()=>{
         setPost(JSON.parse(props.post));
@@ -133,10 +194,34 @@ function PostPage(props : PostProps): JSX.Element {
             <View className='flex flex-row w-[100%] justify-start mt-5'>
                 <Text className='font-[Quicksand-Regular] text-[#000000] mx-4'>{post?.text}</Text>
             </View>
+            <View className='flex flex-row w-[100%] justify-center mt-5'>
+                <View className='bg-[#5E5E5E] h-[1px] w-[70%]'></View>
+            </View>
+            <View className='flex flex-col w-[100%] justify-center mt-5'>
+                {replies && replies.map((reply,index) => (
+                        <ReplyDialog reply={reply} key={index}/>
+                    ))}
+            </View>
         </ScrollView>
         <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={likePost}>
                 <CustomIcon name = {like ? 'LikeActiveIcon':'LikeIcon'} size={30} className='text-[#ffffff] text-center text-xl'/>
         </TouchableOpacity>
+        {!toggleReply &&
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] mr-[80%] ml-4 rounded-full bg-[#000000]' onPress={()=>{setToggleReply(true)}}>
+                <CustomIcon name = 'CommentIcon' size={30} className='text-[#ffffff] text-center text-xl'/>
+        </TouchableOpacity>}
+        {toggleReply &&
+        <View className='absolute h-screen w-screen flex flex-col justify-center items-center bg-[#000000] opacity-90'>
+            <TextInput className='bg-[#000000] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-Regular] p-4 text-lg rounded-full' value={comment} onChangeText={setComment} placeholder='Add a Comment'></TextInput>
+        </View>}
+        {toggleReply &&
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={handleReplies}>
+                <CustomIcon name = 'CommentIcon' size={30} className='text-[#ffffff] text-center text-xl'/>
+        </TouchableOpacity>}
+        {toggleReply &&
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit mt-4 mx-4 rounded-full w-fit' onPress={()=>{setToggleReply(false)}}>
+                <CustomIcon name = 'CloseIcon' size={30} className='text-[#ffffff] text-center text-6xl'/>
+        </TouchableOpacity>}
     </View>;
 }
 
