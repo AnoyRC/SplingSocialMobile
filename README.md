@@ -6,7 +6,7 @@
 
 This project is made with a purpose of bringing in the solana's dev community in a singular decentralized social space. As Solana's Saga is in development, Solspace can be the go-to social app for the developers, where they can post their experience and works on chains.
 
-
+Pitch Deck : https://youtu.be/9m9ZxmRObz4
 
 
 ## Features
