@@ -35,11 +35,6 @@ Install the app after disabling Google Play Protect.
 Currently, Phantom Wallet on mobile is buggy. Import your wallet on Solflare, works like charm.
 
 
-## Authors
-
-- [@AnoyRC](https://www.github.com/AnoyRC)
-
-
 ## Roadmap
 
 - Additional browser support
@@ -49,6 +44,11 @@ Currently, Phantom Wallet on mobile is buggy. Import your wallet on Solflare, wo
 - User Favourites Features
 
 - and more...
+
+
+## Authors
+
+- [@AnoyRC](https://www.github.com/AnoyRC)
 
 
 ## 🚀 About Me
