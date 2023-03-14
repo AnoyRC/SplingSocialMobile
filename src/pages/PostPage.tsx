@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, {useEffect} from 'react';
-import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity, BackHandler, ToastAndroid, TextInput, KeyboardAvoidingView} from 'react-native';
+import {View, ScrollView, Image ,Text, Button, StatusBar, TouchableOpacity, BackHandler, ToastAndroid, TextInput, KeyboardAvoidingView, TouchableWithoutFeedback} from 'react-native';
 import {SocialProtocol} from '@spling/social-protocol';
 import {Keypair} from '@solana/web3.js';
 import {Post, ProtocolOptions, Reply, User} from '@spling/social-protocol/dist/types';
@@ -173,8 +173,8 @@ function PostPage(props : PostProps): JSX.Element {
     return <View className='h-screen w-screen bg-[#f7f9ff]'>
         <View className='w-full h-[40vh] bg-[#EAEAEA]'>
             {post?.media[0].file && <Image className='w-full h-full object-cover' source={{uri : post?.media[0].file}} />}
-            <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit p-4 px-5 mt-4 mx-4 rounded-full w-fit bg-[#ffffff]' onPress={()=>props.navigation.goBack()}>
-                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-xl'/>
+            <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[16vw] w-[16vw] p-4 mt-4 mx-4 rounded-full bg-[#ffffff]' onPress={()=>props.navigation.goBack()}>
+                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-[5vw]'/>
             </TouchableOpacity>
         </View>
         <ScrollView className = ''>
@@ -183,10 +183,12 @@ function PostPage(props : PostProps): JSX.Element {
                 <View className = 'w-[24px] bg-[#5E5E5E] h-[24px] rounded-full mt-1 ml-4 overflow-hidden' >
                     {post?.user.avatar && <Image className = 'w-full h-full object-cover' source = {{uri : post?.user.avatar}} />}
                 </View>
+                <TouchableWithoutFeedback onPress={()=>{props.navigation.navigate('Profile', {userId: post?.userId});}}>
                 <View className = 'flex flex-row justify-between flex-grow'>
                     <Text className = 'text-[#000000] font-[Quicksand-Regular] text-md ml-2'>{post?.user.nickname}</Text>
                     <Text className = 'text-[#000000] font-[Quicksand-Regular] text-md mr-4'>{date}</Text>
                 </View>
+                </TouchableWithoutFeedback>
             </View>
             <View className='flex flex-row w-[100%] justify-center mt-5'>
                 <View className='bg-[#5E5E5E] h-[1px] w-[70%]'></View>
@@ -203,24 +205,24 @@ function PostPage(props : PostProps): JSX.Element {
                     ))}
             </View>
         </ScrollView>
-        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={likePost}>
-                <CustomIcon name = {like ? 'LikeActiveIcon':'LikeIcon'} size={30} className='text-[#ffffff] text-center text-xl'/>
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[16vw] w-[15vw] p-4 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={likePost}>
+                <CustomIcon name = {like ? 'LikeActiveIcon':'LikeIcon'} size={30} className='text-[#ffffff] text-center text-[6vw]'/>
         </TouchableOpacity>
         {!toggleReply &&
-        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] mr-[80%] ml-4 rounded-full bg-[#000000]' onPress={()=>{setToggleReply(true)}}>
-                <CustomIcon name = 'CommentIcon' size={30} className='text-[#ffffff] text-center text-xl'/>
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[16vw] w-[15vw] p-4 mt-[90vh] mr-[80%] ml-4 rounded-full bg-[#000000]' onPress={()=>{setToggleReply(true)}}>
+                <CustomIcon name = 'CommentIcon' size={30} className='text-[#ffffff] text-center text-[6vw]'/>
         </TouchableOpacity>}
         {toggleReply &&
         <View className='absolute h-screen w-screen flex flex-col justify-center items-center bg-[#000000] opacity-90'>
             <TextInput className='bg-[#000000] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-Regular] p-4 text-lg rounded-full' value={comment} onChangeText={setComment} placeholder='Add a Comment'></TextInput>
         </View>}
         {toggleReply &&
-        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={handleReplies}>
-                <CustomIcon name = 'CommentIcon' size={30} className='text-[#ffffff] text-center text-xl'/>
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[16vw] w-[15vw] p-4 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={handleReplies}>
+                <CustomIcon name = 'CommentIcon' size={30} className='text-[#ffffff] text-center text-[6vw]'/>
         </TouchableOpacity>}
         {toggleReply &&
-        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit mt-4 mx-4 rounded-full w-fit' onPress={()=>{setToggleReply(false)}}>
-                <CustomIcon name = 'CloseIcon' size={30} className='text-[#ffffff] text-center text-6xl'/>
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[16vw] w-[15vw] mt-4 mx-4 rounded-full' onPress={()=>{setToggleReply(false)}}>
+                <CustomIcon name = 'CloseIcon' size={30} className='text-[#ffffff] text-center text-[15vw]'/>
         </TouchableOpacity>}
     </View>;
 }

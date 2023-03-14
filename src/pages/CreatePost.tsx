@@ -148,11 +148,11 @@ function Create(props : createProps): JSX.Element {
           )}
         </ScrollView>
 
-        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#ffffff]' onPress={handlePostSubmission}>
-            <CustomIcon name = 'PenIcon' size={30} className='text-[#000000] text-center text-xl'/>
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[16vw] w-[15vw] p-4 mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#ffffff]' onPress={handlePostSubmission}>
+            <CustomIcon name = 'PenIcon' size={30} className='text-[#000000] text-center text-[6vw]'/>
         </TouchableOpacity>
-        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] mr-[80%] ml-4 rounded-full bg-[#ffffff]' onPress={()=>props.navigation.goBack()}>
-                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-xl'/>
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[16vw] w-[15vw] p-4 mt-[90vh] mr-[80%] ml-4 rounded-full bg-[#ffffff]' onPress={()=>props.navigation.goBack()}>
+                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-[6vw]'/>
         </TouchableOpacity>
       </View>
     );

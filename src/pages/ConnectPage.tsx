@@ -46,13 +46,13 @@ function ConnectPage(props : ConnectProps): JSX.Element {
     
 
     return (<View className = 'h-screen w-screen'>
-      <View className='flex flex-col items-center w-[100%] bg-[#000000] rounded-b-full pb-1 pt-32'>
-        <Image source={require('./Favicon.png')} className='h-[60%] w-[53%]'/>
-        <View className='absolute'>
-          <Text className='text-center font-[Quicksand-SemiBold] text-2xl mt-[140%]'>Explore the best of{"\n"}Solana's Dev Community</Text>
+      <View className='flex flex-col items-center w-[100%] h-[65vh] bg-[#000000] rounded-b-full pb-1 pt-32'>
+        <Image source={require('./Favicon.png')} style={{resizeMode:'contain'}} className='h-[60%] w-[53%]'/>
+        <View className=' -mt-[65vh]'>
+          <Text className='text-center font-[Quicksand-SemiBold] text-[3vh] mt-[140%] text-[#878787]'>Explore the best of{"\n"}Solana's Dev Community</Text>
         </View>
       </View>
-      <View className = 'flex flex-col items-center mt-10'>
+      <View className = 'flex flex-col items-center mt-7 h-[35vh]'>
         <TouchableOpacity className='bg-[#000000] w-[70%] p-5 rounded-full' onPress={handleConnect}>
           <Text className='text-center font-[Quicksand-Bold] text-[#ffffff] text-xl'>Connect</Text>
         </TouchableOpacity>

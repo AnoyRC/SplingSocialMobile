@@ -123,8 +123,8 @@ function Profile(props : ProfileProps): JSX.Element {
                 {posts && posts.map((post) => <PostsDialog key={post.postId} post={post} socialProtocol={socialProtocol} navigation={props.navigation} userId={userInfo ? userInfo?.userId : undefined}/>)}
             </View>
         </ScrollView>
-        <TouchableOpacity className='flex flex-row items-center justify-center h-fit p-4 px-5 mt-4 mx-4 rounded-full w-fit bg-[#ffffff] absolute' onPress={()=>props.navigation.goBack()}>
-                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-xl'/>
+        <TouchableOpacity className='flex flex-row items-center justify-center h-[16vw] w-[16vw] mt-4 mx-4 rounded-full bg-[#ffffff] absolute' onPress={()=>props.navigation.goBack()}>
+                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-[5vw]'/>
         </TouchableOpacity>
         {toggleLoading && <LoadingScreen/>}
     </View>

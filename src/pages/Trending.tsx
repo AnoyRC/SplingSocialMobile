@@ -133,8 +133,8 @@ function Trending(props : FeedProps): JSX.Element {
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[81vh] ml-[80%] mr-4 rounded-full bg-[#000000]' onPress={()=>{props.navigation.navigate('Create')}}>
-        <CustomIcon name = 'PenIcon' size={30} className='text-[#ffffff] text-center text-xl'/>
+      <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[15vw] w-[15vw] mt-[81vh] ml-[80vw] mr-4 rounded-full bg-[#000000]' onPress={()=>{props.navigation.navigate('Create')}}>
+        <CustomIcon name = 'PenIcon' size={30} className='text-[#ffffff] text-center text-[6vw]'/>
       </TouchableOpacity>
       {toggleLoading && <LoadingScreen/>}
     </View>

@@ -129,11 +129,11 @@ function CreateUser(props : createProps): JSX.Element {
             placeholder="Bio..."></TextInput>
         </ScrollView>
 
-        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000] rotate-45' onPress={handlePostSubmission}>
-            <CustomIcon name = 'CloseIcon' size={30} className='text-[#ffffff] text-center text-6xl'/>
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[16vw] w-[15vw] mt-[90vh] ml-[80%] mr-4 rounded-full bg-[#000000] rotate-45' onPress={handlePostSubmission}>
+            <CustomIcon name = 'CloseIcon' size={30} className='text-[#ffffff] text-center text-[15vw]'/>
         </TouchableOpacity>
-        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-fit w-fit p-4 px-5 mt-[90vh] mr-[80%] ml-4 rounded-full bg-[#ffffff]' onPress={()=>props.navigation.goBack()}>
-                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-xl'/>
+        <TouchableOpacity className='flex flex-row absolute items-center justify-center h-[16vw] w-[15vw] p-4 mt-[90vh] mr-[80%] ml-4 rounded-full bg-[#ffffff]' onPress={()=>props.navigation.goBack()}>
+                <CustomIcon name = {prevRoute.name === 'Trending' ? 'FeaturedActiveIcon' : prevRoute.name === 'Profile' ? 'AccountIcon' : 'FeedIcon'} size={30} className='text-[#000000] text-center text-[6vw]'/>
         </TouchableOpacity>
       </View>
     );
