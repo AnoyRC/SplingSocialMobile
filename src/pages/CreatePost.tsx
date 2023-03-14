@@ -118,23 +118,26 @@ function Create(props : createProps): JSX.Element {
           </TouchableOpacity>
           <TextInput
             multiline
-            className="bg-[#000000] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-SemiBold] mt-2 px-4 text-4xl rounded-full"
+            className="bg-[#000000] text-[#ffffff] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-SemiBold] mt-2 px-4 text-4xl rounded-full"
             value={title}
             onChangeText={setTitle}
-            placeholder="Title..."></TextInput>
+            placeholder="Title..."
+            placeholderTextColor="#757575"></TextInput>
           <TextInput
             multiline
-            className="bg-[#000000] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-Regular] px-4 text-lg rounded-full"
+            className="bg-[#000000] text-[#ffffff] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-Regular] px-4 text-lg rounded-full"
             value={body}
             onChangeText={setBody}
-            placeholder="Body..."></TextInput>
+            placeholder="Body..."
+            placeholderTextColor="#757575"></TextInput>
           <TextInput
             multiline
             value={tag}
             maxLength={20}
             onChangeText={setTag}
-            className="bg-[#000000] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-Regular] px-4 text-base rounded-full"
-            placeholder="Add a tag..."></TextInput>
+            className="bg-[#000000] text-[#ffffff] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-Regular] px-4 text-base rounded-full"
+            placeholder="Add a tag..."
+            placeholderTextColor="#757575"></TextInput>
 
           {media && (
             <View

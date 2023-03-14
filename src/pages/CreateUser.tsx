@@ -117,15 +117,17 @@ function CreateUser(props : createProps): JSX.Element {
           </TouchableOpacity>
           <TextInput
             multiline
-            className="bg-[#000000] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-SemiBold] mt-2 px-4 text-4xl rounded-full"
+            className="bg-[#000000] w-[90%] text-[#ffffff] placeholder-shown:text-[#000000] font-[Quicksand-SemiBold] mt-2 px-4 text-4xl rounded-full"
             value={name}
             onChangeText={setName}
+            placeholderTextColor="#757575"
             placeholder="Username..."></TextInput>
           <TextInput
             multiline
-            className="bg-[#000000] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-Regular] px-4 text-lg rounded-full"
+            className="bg-[#000000] text-[#ffffff] w-[90%] placeholder-shown:text-[#000000] font-[Quicksand-Regular] px-4 text-lg rounded-full"
             value={bio}
             onChangeText={setBio}
+            placeholderTextColor="#757575"
             placeholder="Bio..."></TextInput>
         </ScrollView>
 
